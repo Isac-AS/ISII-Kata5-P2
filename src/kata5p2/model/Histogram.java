@@ -17,4 +17,13 @@ public class Histogram<T> {
     public void increment(T key) {
         map.put(key, map.containsKey(key) ? map.get(key) + 1 : 1);
     }
+    
+    @Override
+    public String toString() {
+        String result = "";
+        for (T key : map.keySet()) {
+            result = result + key + " -> " + map.get(key) + ".\n";
+        }
+        return result;
+    }
 }

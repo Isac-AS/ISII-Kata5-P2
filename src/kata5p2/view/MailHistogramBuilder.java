@@ -13,4 +13,12 @@ public class MailHistogramBuilder {
         
         return histogram;
     }
+    
+    public static Histogram<String> buildFromStrings (List<String> mailList) {
+        Histogram<String> histogram = new Histogram<>();
+        for (String mail : mailList) 
+            histogram.increment(mail.substring(mail.lastIndexOf("@")+1));
+        
+        return histogram;
+    }
 }
