@@ -1,35 +1,39 @@
 package kata5p2.view;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MailListReaderBD {
     
-    public static List<String> read(String fileName) {
-
-        ArrayList<String> list = new ArrayList<>();
-
+    
+    private static Connection connect() {
+        String url = "jdbc:sqlite:KATA5.db";
+        Connection conn = null;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
-            while (true) {
-                String lineText = reader.readLine();
-                if (lineText == null) {
-                    break;
-                }
-                if (lineText.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")) {
-                    list.add(lineText);
-                }
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return conn;
+    }
+    
+    public static List<String> read() {
+        ArrayList<String> list = new ArrayList<>();
+        String sql = "SELECT * FROM EMAIL";
+        
+        try (Connection conn = MailListReaderBD.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                list.add(rs.getString("direccion"));
             }
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("ERROR MailListReader::read FileNotFoundException" + ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println("ERROR MailListReader::read IOException" + ex.getMessage());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
         return list;
     }
